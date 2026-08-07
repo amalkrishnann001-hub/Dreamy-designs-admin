@@ -1,95 +1,87 @@
-const firebaseConfig = {
-  apiKey: "AIzaSyBdYWBLspsfNZ_T3C3sUPZLo3AzqitnO9Y",
-  authDomain: "dreamy-designs-admin.firebaseapp.com",
-  projectId: "dreamy-designs-admin",
-  storageBucket: "dreamy-designs-admin.firebasestorage.app",
-  messagingSenderId: "421647280739",
-  appId: "1:421647280739:web:86d07f7c0b733b79cca656"
-};
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dreamy Designs - Admin Login</title>
+
+  <title>Dreamy Designs Admin</title>
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
     }
 
     body {
+      margin: 0;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #f8d8e8, #d9e8ff);
       padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f5d9ec, #dce7ff);
     }
 
     .login-box {
       width: 100%;
-      max-width: 400px;
+      max-width: 390px;
       background: white;
       padding: 35px 25px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border-radius: 22px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
       text-align: center;
     }
 
-    .logo {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
-      margin-bottom: 10px;
-    }
-
-    h1 {
-      font-size: 25px;
+    .crown {
+      font-size: 55px;
       margin-bottom: 5px;
     }
 
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      color: #111;
+    }
+
     .subtitle {
+      margin: 8px 0 28px;
       color: #777;
-      margin-bottom: 25px;
+      font-size: 17px;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      margin: 8px 0;
+      padding: 15px;
+      margin-bottom: 14px;
       border: 1px solid #ddd;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 16px;
       outline: none;
     }
 
     input:focus {
-      border-color: #777;
+      border-color: #555;
     }
 
     button {
       width: 100%;
-      padding: 14px;
-      margin-top: 15px;
+      padding: 15px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #222;
       color: white;
-      font-size: 16px;
+      font-size: 17px;
       cursor: pointer;
     }
 
-    button:hover {
-      opacity: 0.9;
+    button:disabled {
+      opacity: 0.6;
     }
 
     #message {
-      margin-top: 15px;
+      margin-top: 18px;
       font-size: 14px;
+      min-height: 20px;
     }
   </style>
 </head>
@@ -98,14 +90,17 @@ const firebaseConfig = {
 
   <div class="login-box">
 
-    <h1>👑 Dreamy Designs</h1>
+    <div class="crown">👑</div>
+
+    <h1>Dreamy Designs</h1>
+
     <p class="subtitle">Admin Panel Login</p>
 
     <input
       type="email"
       id="email"
       placeholder="Admin Email"
-      autocomplete="email"
+      autocomplete="username"
     >
 
     <input
@@ -115,17 +110,36 @@ const firebaseConfig = {
       autocomplete="current-password"
     >
 
-    <button onclick="login()">Login</button>
+    <button id="loginButton" onclick="login()">
+      Login
+    </button>
 
     <p id="message"></p>
 
   </div>
 
-  <!-- Firebase -->
+
+  <!-- Firebase configuration -->
+  <script>
+    const firebaseConfig = {
+  apiKey: "AIzaSyBdYWBLspsfNZ_T3C3sUPZLo3AzqitnO9Y",
+  authDomain: "dreamy-designs-admin.firebaseapp.com",
+  projectId: "dreamy-designs-admin",
+  storageBucket: "dreamy-designs-admin.firebasestorage.app",
+  messagingSenderId: "421647280739",
+  appId: "1:421647280739:web:86d07f7c0b733b79cca656"
+};
+  </script>
+
+
+  <!-- Firebase libraries -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
+
+  <!-- Login system -->
   <script>
+
     firebase.initializeApp(firebaseConfig);
 
     const auth = firebase.auth();
@@ -134,31 +148,57 @@ const firebaseConfig = {
 
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value;
+
       const message = document.getElementById("message");
+      const button = document.getElementById("loginButton");
 
       if (!email || !password) {
-        message.textContent = "Please enter email and password.";
+        message.textContent = "Please enter your email and password.";
         return;
       }
 
-      message.textContent = "Logging in...";
+      button.disabled = true;
+      button.textContent = "Logging in...";
+      message.textContent = "";
 
       auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
+
+        .then(function(userCredential) {
 
           message.textContent = "Login successful!";
 
-          // Dashboard will be created next
-          window.location.href = "dashboard.html";
+          /*
+           * Dashboard will be added next.
+           * For now we won't redirect anywhere.
+           */
+
+          button.textContent = "Logged in ✓";
 
         })
-        .catch((error) => {
 
-          message.textContent = "Login failed. Check your email and password.";
+        .catch(function(error) {
 
-          console.log(error);
+          console.error(error);
+
+          button.disabled = false;
+          button.textContent = "Login";
+
+          if (error.code === "auth/invalid-credential") {
+            message.textContent = "Incorrect email or password.";
+          }
+          else if (error.code === "auth/invalid-email") {
+            message.textContent = "Please enter a valid email.";
+          }
+          else if (error.code === "auth/too-many-requests") {
+            message.textContent = "Too many attempts. Try again later.";
+          }
+          else {
+            message.textContent = "Login error: " + error.message;
+          }
+
         });
     }
+
   </script>
 
 </body>
