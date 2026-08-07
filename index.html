@@ -165,16 +165,13 @@
 
         .then(function(userCredential) {
 
-          message.textContent = "Login successful!";
+  message.textContent = "Login successful!";
 
-          /*
-           * Dashboard will be added next.
-           * For now we won't redirect anywhere.
-           */
+  setTimeout(function() {
+    window.location.href = "dashboard.html";
+  }, 500);
 
-          button.textContent = "Logged in ✓";
-
-        })
+})
 
         .catch(function(error) {
 
