@@ -139,6 +139,25 @@
     <div style="margin-top:25px;">
   <h3> Your Products</h3>
   <div id="productList">
+    <div id="productDetails" style="display:none; margin-top:20px; padding:20px; background:#f8f8f8; border-radius:12px;">
+
+  <button onclick="closeProductDetails()" style="padding:10px 15px; margin-bottom:15px;">
+    ← Back to Products
+  </button>
+
+  <h2 id="detailName"></h2>
+
+  <p id="detailPrice"></p>
+
+  <p id="detailCategory"></p>
+
+  <p id="detailDescription"></p>
+
+  <button id="orderButton" style="padding:12px 20px;">
+    Order Now
+  </button>
+
+    </div>
     <p>Loading products...</p>
   </div>
     </div>
