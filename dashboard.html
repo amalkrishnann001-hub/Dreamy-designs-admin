@@ -176,7 +176,7 @@
 
   const auth = firebase.auth();
   const db = firebase.firestore();
-  <script>
+  
   function showProductForm() {
   document.getElementById("productForm").style.display = "block";
 }
@@ -228,7 +228,7 @@ function addProduct() {
 
   });
 }
-</script>
+
 
   // Protect dashboard
   auth.onAuthStateChanged(function(user) {
