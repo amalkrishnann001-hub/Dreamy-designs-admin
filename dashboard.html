@@ -290,14 +290,25 @@ function addProduct() {
   const name = document.getElementById("productName").value.trim();
   const price = Number(document.getElementById("productPrice").value);
   const category = document.getElementById("productCategory").value.trim();
+  const image = document.getElementById("productImage").value.trim();
+  const galleryText = document.getElementById("productGallery").value.trim();
   const description = document.getElementById("productDescription").value.trim();
+
+  const trending = document.getElementById("trending").checked;
+  const topSelling = document.getElementById("topSelling").checked;
 
   const message = document.getElementById("productMessage");
 
   if (!name || !price || !category || !description) {
-    message.textContent = "Please fill all fields.";
+    message.textContent = "Please fill all required fields.";
     return;
   }
+
+  const gallery = galleryText
+    ? galleryText.split(",").map(function(url) {
+        return url.trim();
+      }).filter(Boolean)
+    : [];
 
   message.textContent = "Saving product...";
 
@@ -306,9 +317,10 @@ function addProduct() {
     price: price,
     category: category,
     description: description,
-    image: "",
-    trending: false,
-    topSelling: false,
+    image: image,
+    gallery: gallery,
+    trending: trending,
+    topSelling: topSelling,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   })
   .then(function() {
@@ -318,7 +330,14 @@ function addProduct() {
     document.getElementById("productName").value = "";
     document.getElementById("productPrice").value = "";
     document.getElementById("productCategory").value = "";
+    document.getElementById("productImage").value = "";
+    document.getElementById("productGallery").value = "";
     document.getElementById("productDescription").value = "";
+
+    document.getElementById("trending").checked = false;
+    document.getElementById("topSelling").checked = false;
+
+    loadProducts();
 
   })
   .catch(function(error) {
@@ -328,8 +347,6 @@ function addProduct() {
 
   });
 }
-
-
   // Protect dashboard
   auth.onAuthStateChanged(function(user) {
 
