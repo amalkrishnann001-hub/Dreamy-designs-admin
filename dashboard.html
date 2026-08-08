@@ -128,8 +128,24 @@
   <input id="productName" placeholder="Product name"><br><br>
   <input id="productPrice" type="number" placeholder="Price"><br><br>
   <input id="productCategory" placeholder="Category"><br><br>
-  <textarea id="productDescription" placeholder="Description"></textarea><br><br>
 
+<input id="productImage" placeholder="Main image URL"><br><br>
+
+<textarea id="productGallery" placeholder="Gallery image URLs (separate with commas)"></textarea><br><br>
+
+<textarea id="productDescription" placeholder="Description"></textarea><br><br>
+
+<label>
+  <input type="checkbox" id="trending">
+  🔥 Trending Product
+</label>
+<br><br>
+
+<label>
+  <input type="checkbox" id="topSelling">
+  ⭐ Top Selling Product
+</label>
+<br><br>
   <button onclick="addProduct()">Save Product</button>
   <button onclick="hideProductForm()">Cancel</button>
 
