@@ -119,9 +119,22 @@
 
     <div class="card">
       <h3>🛍️ Products</h3>
-      <p>Add, edit and remove products.</p>
-      <button>Manage Products</button>
-      <p class="coming">Coming next...</p>
+      <h3>🛍️ Products</h3>
+<p>Add, edit and remove products.</p>
+
+<button onclick="showProductForm()">➕ Add Product</button>
+
+<div id="productForm" style="display:none; margin-top:20px;">
+  <input id="productName" placeholder="Product name"><br><br>
+  <input id="productPrice" type="number" placeholder="Price"><br><br>
+  <input id="productCategory" placeholder="Category"><br><br>
+  <textarea id="productDescription" placeholder="Description"></textarea><br><br>
+
+  <button onclick="addProduct()">Save Product</button>
+  <button onclick="hideProductForm()">Cancel</button>
+
+  <p id="productMessage"></p>
+</div>
     </div>
 
     <div class="card">
