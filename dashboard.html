@@ -176,6 +176,59 @@
 
   const auth = firebase.auth();
   const db = firebase.firestore();
+  <script>
+  function showProductForm() {
+  document.getElementById("productForm").style.display = "block";
+}
+
+function hideProductForm() {
+  document.getElementById("productForm").style.display = "none";
+}
+
+function addProduct() {
+
+  const name = document.getElementById("productName").value.trim();
+  const price = Number(document.getElementById("productPrice").value);
+  const category = document.getElementById("productCategory").value.trim();
+  const description = document.getElementById("productDescription").value.trim();
+
+  const message = document.getElementById("productMessage");
+
+  if (!name || !price || !category || !description) {
+    message.textContent = "Please fill all fields.";
+    return;
+  }
+
+  message.textContent = "Saving product...";
+
+  db.collection("products").add({
+    name: name,
+    price: price,
+    category: category,
+    description: description,
+    image: "",
+    trending: false,
+    topSelling: false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  })
+  .then(function() {
+
+    message.textContent = "✅ Product added successfully!";
+
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productCategory").value = "";
+    document.getElementById("productDescription").value = "";
+
+  })
+  .catch(function(error) {
+
+    console.error(error);
+    message.textContent = "❌ Error: " + error.message;
+
+  });
+}
+</script>
 
   // Protect dashboard
   auth.onAuthStateChanged(function(user) {
