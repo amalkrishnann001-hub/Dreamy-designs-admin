@@ -206,20 +206,27 @@
 
         const item = document.createElement("div");
 
-        item.style.background = "#f8f8f8";
-        item.style.padding = "15px";
-        item.style.marginTop = "12px";
-        item.style.borderRadius = "10px";
+item.style.background = "#f8f8f8";
+item.style.padding = "15px";
+item.style.marginTop = "12px";
+item.style.borderRadius = "10px";
+item.style.cursor = "pointer";
 
-        item.innerHTML = `
-          <strong>${product.name || "Unnamed product"}</strong>
-          <br>
-          ₹${product.price || 0}
-          <br>
-          <small>${product.category || ""}</small>
-        `;
+item.innerHTML = `
+  <strong>${product.name || "Unnamed product"}</strong>
+  <br>
+  ₹${product.price || 0}
+  <br>
+  <small>${product.category || ""}</small>
+`;
 
-        productList.appendChild(item);
+item.addEventListener("click", function() {
+  alert("Product: " + (product.name || "Unnamed product") +
+        "\nPrice: ₹" + (product.price || 0) +
+        "\n\n" + (product.description || "No description available."));
+});
+
+productList.appendChild(item);
 
       });
 
