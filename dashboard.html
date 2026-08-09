@@ -129,10 +129,21 @@
   <input id="productPrice" type="number" placeholder="Price"><br><br>
   <input id="productCategory" placeholder="Category"><br><br>
 
-<input id="productImage" placeholder="Main image URL"><br><br>
+<label>
+  Main Product Image
+</label>
+<br>
+<input type="file" id="productImageFile" accept="image/*">
+<br><br>
 
-<textarea id="productGallery" placeholder="Gallery image URLs (separate with commas)"></textarea><br><br>
+<label>
+  Product Gallery Images
+</label>
+<br>
+<input type="file" id="productGalleryFiles" accept="image/*" multiple>
+<br><br>
 
+<div id="imagePreview"></div>
 <textarea id="productDescription" placeholder="Description"></textarea><br><br>
 
 <label>
@@ -201,6 +212,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script>
 
   const firebaseConfig = {
@@ -217,6 +229,7 @@
 
   const auth = firebase.auth();
   const db = firebase.firestore();
+  const storage = firebase.storage();
   function loadProducts() {
 
   const productList = document.getElementById("productList");
@@ -285,25 +298,123 @@ function hideProductForm() {
   document.getElementById("productForm").style.display = "none";
 }
 
-function addProduct() {
+async function addProduct() {
 
   const name = document.getElementById("productName").value.trim();
   const price = Number(document.getElementById("productPrice").value);
   const category = document.getElementById("productCategory").value.trim();
-  const image = document.getElementById("productImage").value.trim();
-  const galleryText = document.getElementById("productGallery").value.trim();
-  const description = document.getElementById("productDescription").value.trim();
 
-  const trending = document.getElementById("trending").checked;
-  const topSelling = document.getElementById("topSelling").checked;
+  const description =
+    document.getElementById("productDescription").value.trim();
 
-  const message = document.getElementById("productMessage");
+  const mainImageFile =
+    document.getElementById("productImageFile").files[0];
 
-  if (!name || !price || !category || !description) {
-    message.textContent = "Please fill all required fields.";
+  const galleryFiles =
+    Array.from(document.getElementById("productGalleryFiles").files);
+
+  const trending =
+    document.getElementById("trending").checked;
+
+  const topSelling =
+    document.getElementById("topSelling").checked;
+
+  const message =
+    document.getElementById("productMessage");
+
+
+  // Check required fields
+  if (!name || !price || !category || !description || !mainImageFile) {
+    message.textContent =
+      "❌ Please fill all required fields and select a main image.";
     return;
   }
 
+
+  try {
+
+    message.textContent = "📤 Uploading images...";
+
+
+    // Upload main image
+    const mainImageRef = storage
+      .ref()
+      .child("products/" + Date.now() + "_" + mainImageFile.name);
+
+    await mainImageRef.put(mainImageFile);
+
+    const mainImageURL =
+      await mainImageRef.getDownloadURL();
+
+
+    // Upload gallery images
+    const gallery = [];
+
+    for (const file of galleryFiles) {
+
+      const galleryRef = storage
+        .ref()
+        .child("products/gallery/" + Date.now() + "_" + file.name);
+
+      await galleryRef.put(file);
+
+      const galleryURL =
+        await galleryRef.getDownloadURL();
+
+      gallery.push(galleryURL);
+    }
+
+
+    message.textContent = "Saving product...";
+
+
+    // Save product to Firestore
+    await db.collection("products").add({
+
+      name: name,
+      price: price,
+      category: category,
+      description: description,
+
+      image: mainImageURL,
+      gallery: gallery,
+
+      trending: trending,
+      topSelling: topSelling,
+
+      createdAt:
+        firebase.firestore.FieldValue.serverTimestamp()
+
+    });
+
+
+    message.textContent =
+      "✅ Product added successfully!";
+
+
+    // Clear form
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    document.getElementById("productCategory").value = "";
+    document.getElementById("productDescription").value = "";
+
+    document.getElementById("productImageFile").value = "";
+    document.getElementById("productGalleryFiles").value = "";
+
+    document.getElementById("trending").checked = false;
+    document.getElementById("topSelling").checked = false;
+
+
+    loadProducts();
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "❌ Error: " + error.message;
+  }
+}
   const gallery = galleryText
     ? galleryText.split(",").map(function(url) {
         return url.trim();
