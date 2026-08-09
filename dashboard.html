@@ -711,35 +711,53 @@ async function saveProduct(){
 ================================ */
 
 async function loadProducts(){
+async function loadProducts(){
 
-  const productList=
+  const productList =
     document.getElementById("productList");
 
-  productList.innerHTML=
+  productList.innerHTML =
     "<p>Loading products...</p>";
-
 
   try{
 
-    const snapshot=
+    const snapshot =
       await db
       .collection("products")
-      .orderBy("createdAt","desc")
       .get();
 
-
-    allProducts=[];
-
+    allProducts = [];
 
     snapshot.forEach(function(doc){
 
       allProducts.push({
 
-        id:doc.id,
+        id: doc.id,
 
         ...doc.data()
 
       });
+
+    });
+
+
+    /* Sort newest first when createdAt exists */
+
+    allProducts.sort(function(a,b){
+
+      const aTime =
+        a.createdAt &&
+        a.createdAt.toMillis
+        ? a.createdAt.toMillis()
+        : 0;
+
+      const bTime =
+        b.createdAt &&
+        b.createdAt.toMillis
+        ? b.createdAt.toMillis()
+        : 0;
+
+      return bTime - aTime;
 
     });
 
@@ -751,52 +769,14 @@ async function loadProducts(){
 
     console.error(error);
 
-
-    /*
-      FALLBACK:
-      This also loads older products
-      that may not have createdAt.
-    */
-
-    try{
-
-      const snapshot=
-        await db
-        .collection("products")
-        .get();
-
-
-      allProducts=[];
-
-
-      snapshot.forEach(function(doc){
-
-        allProducts.push({
-
-          id:doc.id,
-
-          ...doc.data()
-
-        });
-
-      });
-
-
-      renderProducts(allProducts);
-
-
-    }catch(secondError){
-
-      console.error(secondError);
-
-      productList.innerHTML=
-        "<p>❌ Unable to load products.</p>";
-
-    }
+    productList.innerHTML =
+      "<p>❌ Unable to load products: " +
+      error.message +
+      "</p>";
 
   }
 
-}
+  }
 
 
 /* ================================
