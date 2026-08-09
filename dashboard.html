@@ -416,40 +416,6 @@ async function addProduct() {
   }
 }
   
-  db.collection("products").add({
-    name: name,
-    price: price,
-    category: category,
-    description: description,
-    image: image,
-    gallery: gallery,
-    trending: trending,
-    topSelling: topSelling,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(function() {
-
-    message.textContent = "✅ Product added successfully!";
-
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-    document.getElementById("productCategory").value = "";
-    document.getElementById("productImage").value = "";
-    document.getElementById("productGallery").value = "";
-    document.getElementById("productDescription").value = "";
-
-    document.getElementById("trending").checked = false;
-    document.getElementById("topSelling").checked = false;
-
-    loadProducts();
-
-  })
-  .catch(function(error) {
-
-    console.error(error);
-    message.textContent = "❌ Error: " + error.message;
-
-  });
 }
   // Protect dashboard
   auth.onAuthStateChanged(function(user) {
