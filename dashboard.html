@@ -415,14 +415,7 @@ async function addProduct() {
       "❌ Error: " + error.message;
   }
 }
-  const gallery = galleryText
-    ? galleryText.split(",").map(function(url) {
-        return url.trim();
-      }).filter(Boolean)
-    : [];
-
-  message.textContent = "Saving product...";
-
+  
   db.collection("products").add({
     name: name,
     price: price,
