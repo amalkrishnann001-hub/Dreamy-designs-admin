@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamy Designs - Admin Dashboard</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f6f3fa;
+  color:#222;
+}
+
+header{
+  background:#222;
+  color:white;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+header h1{
+  margin:0;
+  font-size:20px;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:10px 15px;
+  cursor:pointer;
+}
+
+#logout{
+  background:white;
+  color:#222;
+}
+
+.container{
+  width:94%;
+  max-width:1100px;
+  margin:auto;
+  padding:25px 0;
+}
+
+.welcome,
+.card{
+  background:white;
+  padding:22px;
+  border-radius:15px;
+  margin-bottom:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+}
+
+.card button{
+  width:100%;
+  background:#222;
+  color:white;
+}
+
+#productForm{
+  display:none;
+  margin-top:20px;
+  padding:20px;
+  background:#f8f8f8;
+  border-radius:12px;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font:inherit;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:bold;
+}
+
+.preview{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fill,minmax(100px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+
+.preview img{
+  width:100%;
+  height:100px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.message{
+  font-weight:bold;
+}
+
+.success{
+  color:green;
+}
+
+.error{
+  color:#d9363e;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+  <h1>Dreamy Designs Admin</h1>
+
+  <button id="logout">
+    Logout
+  </button>
+
+</header>
+
+
+<div class="container">
+
+
+<div class="welcome">
+
+  <h2>
+    Welcome, Admin 👋
+  </h2>
+
+  <p>
+    You are successfully logged in.
+  </p>
+
+</div>
+
+
+<div class="grid">
+
+
+<div class="card">
+
+  <h3>
+    🔥 Trending Products
+  </h3>
+
+  <p>
+    Manage trending products.
+  </p>
+
+  <button onclick="filterProducts('trending')">
+    View Trending
+  </button>
+
+</div>
+
+
+<div class="card">
+
+  <h3>
+    ⭐ Top Selling
+  </h3>
+
+  <p>
+    Manage top-selling products.
+  </p>
+
+  <button onclick="filterProducts('topSelling')">
+    View Top Selling
+  </button>
+
+</div>
+
+
+<div class="card">
+
+  <h3>
+    🖼️ Gallery
+  </h3>
+
+  <p>
+    Manage product images.
+  </p>
+
+  <button onclick="scrollProducts()">
+    Manage Gallery
+  </button>
+
+</div>
+
+
+<div class="card">
+
+  <h3>
+    💬 Reviews
+  </h3>
+
+  <p>
+    View product reviews.
+  </p>
+
+  <button onclick="scrollProducts()">
+    View Reviews
+  </button>
+
+</div>
+
+
+</div>
+
+
+<div class="card" id="productsSection">
+
+  <h2>
+    Your Products
+  </h2>
+
+
+  <button
+    onclick="showProductForm()"
+    style="background:#222;color:white">
+
+    + Add Product
+
+  </button>
+
+
+  <div id="productForm">
+
+    <h3 id="formTitle">
+      Add Product
+    </h3>
+
+
+    <input
+      type="hidden"
+      id="editingProductId">
+
+
+    <label>
+      Product Name *
+    </label>
+
+    <input
+      id="productName"
+      type="text"
+      placeholder="Product name">
+
+
+    <label>
+      Price *
+    </label>
+
+    <input
+      id="productPrice"
+      type="number"
+      placeholder="Price">
+
+
+    <label>
+      Category *
+    </label>
+
+    <input
+      id="productCategory"
+      type="text"
+      placeholder="Category">
+
+
+    <label>
+      Description *
+    </label>
+
+    <textarea
+      id="productDescription"
+      placeholder="Product description">
+    </textarea>
+
+
+    <label>
+      Order Link
+    </label>
+
+    <input
+      id="productOrderLink"
+      type="url"
+      placeholder="https://...">
+
+
+    <label>
+      Main Product Image *
+    </label>
+
+    <input
+      id="productImageFile"
+      type="file"
+      accept="image/*">
+
+
+    <div
+      id="mainPreview"
+      class="preview">
+    </div>
+
+
+    <label>
+      Gallery Images
+    </label>
+
+    <input
+      id="productGalleryFiles"
+      type="file"
+      accept="image/*"
+      multiple>
+
+
+    <div
+      id="galleryPreview"
+      class="preview">
+    </div>
+
+
+    <p style="
+      margin:8px 0;
+      color:#666;
+      font-size:13px;
+    ">
+      Select new gallery images to replace
+      the current gallery when editing.
+      Leave it empty to keep the existing gallery.
+    </p>
+
+
+    <label>
+
+      <input
+        type="checkbox"
+        id="trending">
+
+      🔥 Trending Product
+
+    </label>
+
+
+    <label>
+
+      <input
+        type="checkbox"
+        id="topSelling">
+
+      ⭐ Top Selling Product
+
+    </label>
+
+
+    <button
+      onclick="saveProduct()"
+      style="background:#222;color:white">
+
+      Save Product
+
+    </button>
+
+
+    <button
+      onclick="hideProductForm()">
+
+      Cancel
+
+    </button>
+
+
+    <p
+      id="productMessage"
+      class="message">
+    </p>
+
+  </div>
+
+
+  <div id="productList">
+
+    <p>
+      Loading products...
+    </p>
+
+  </div>
+
+</div>
+
+
+<div
+  id="productDetails"
+  class="card"
+  style="display:none">
+
+  <h2 id="detailName"></h2>
+
+
+  <img
+    id="detailImage"
+    style="
+      width:100%;
+      max-height:400px;
+      object-fit:contain;
+    ">
+
+
+  <p id="detailPrice"></p>
+
+  <p id="detailCategory"></p>
+
+  <p id="detailDescription"></p>
+
+
+  <div
+    id="detailGallery"
+    class="preview">
+  </div>
+
+
+  <h3>
+    💬 Reviews
+  </h3>
+
+
+  <div id="reviewList">
+
+    <p>
+      Loading reviews...
+    </p>
+
+  </div>
+
+
+  <button onclick="closeDetails()">
+
+    ← Back
+
+  </button>
+
+</div>
+
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script src="
+https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js">
+</script>
+
+<script src="
+https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js">
+</script>
+
+<script src="
+https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js">
+</script>
+
+<script src="
+https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js">
+</script>
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBdYWBLspsfNZ_T3C3sUPZLo3AzqitnO9Y",
+  authDomain: "dreamy-designs-admin.firebaseapp.com",
+  projectId: "dreamy-designs-admin",
+  storageBucket: "dreamy-designs-admin.firebasestorage.app",
+  messagingSenderId: "421647280739",
+  appId: "1:421647280739:web:86d07f7c0b733b79cca656"
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+const auth = firebase.auth();
+
+const db = firebase.firestore();
+
+const storage = firebase.storage();
+
+
+/*
+  IMAGE UPLOAD NOTE
+
+  Images are uploaded to Firebase Storage.
+  If you get a permission error during upload,
+  we will check Firebase Storage Rules.
+*/
+
+
+let allProducts = [];
+
+let currentProduct = null;
+
+
+/* ================================
+   LOGIN PROTECTION
+================================ */
+
+auth.onAuthStateChanged(function(user){
+
+  if(!user){
+
+    window.location.href = "index.html";
+
+    return;
+
+  }
+
+  loadProducts();
+
+});
+
+
+/* ================================
+   LOGOUT
+================================ */
+
+document
+  .getElementById("logout")
+  .addEventListener("click",function(){
+
+    auth.signOut()
+      .then(function(){
+
+        window.location.href = "index.html";
+
+      })
+      .catch(function(error){
+
+        alert(
+          "Logout failed: " +
+          error.message
+        );
+
+      });
+
+  });
+
+
+/* ================================
+   SHOW PRODUCT FORM
+================================ */
+
+function showProductForm(product = null){
+
+  document
+    .getElementById("productForm")
+    .style.display = "block";
+
+
+  const title =
+    document.getElementById("formTitle");
+
+  const editingId =
+    document.getElementById("editingProductId");
+
+  const message =
+    document.getElementById("productMessage");
+
+
+  message.textContent = "";
+
+  message.className = "message";
+
+
+  /* ================================
+     EDIT EXISTING PRODUCT
+  ================================= */
+
+  if(product){
+
+    title.textContent = "Edit Product";
+
+    editingId.value = product.id;
+
+
+    document.getElementById(
+      "productName"
+    ).value =
+      product.name || "";
+
+
+    document.getElementById(
+      "productPrice"
+    ).value =
+      product.price !== undefined
+        ? product.price
+        : "";
+
+
+    document.getElementById(
+      "productCategory"
+    ).value =
+      product.category || "";
+
+
+    document.getElementById(
+      "productDescription"
+    ).value =
+      product.description || "";
+
+
+    document.getElementById(
+      "productOrderLink"
+    ).value =
+      product.orderLink || "";
+
+
+    document.getElementById(
+      "trending"
+    ).checked =
+      product.trending === true;
+
+
+    document.getElementById(
+      "topSelling"
+    ).checked =
+      product.topSelling === true;
+
+
+    /*
+      Clear file inputs.
+
+      Existing images remain in Firebase.
+      New images can be selected if required.
+    */
+
+    document.getElementById(
+      "productImageFile"
+    ).value = "";
+
+
+    document.getElementById(
+      "productGalleryFiles"
+    ).value = "";
+
+
+    /* CURRENT MAIN IMAGE */
+
+    const mainPreview =
+      document.getElementById(
+        "mainPreview"
+      );
+
+
+    if(product.image){
+
+      mainPreview.innerHTML =
+        '<div>' +
+
+        '<small>Current main image</small>' +
+
+        '<img src="' +
+        escapeHtml(product.image) +
+        '" alt="Current main image">' +
+
+        '</div>';
+
+    }else{
+
+      mainPreview.innerHTML =
+        "<p>No current main image.</p>";
+
+    }
+
+
+    /* CURRENT GALLERY */
+
+    const galleryPreview =
+      document.getElementById(
+        "galleryPreview"
+      );
+
+
+    galleryPreview.innerHTML = "";
+
+
+    if(
+      product.gallery &&
+      product.gallery.length
+    ){
+
+      product.gallery.forEach(
+        function(url){
+
+          galleryPreview.innerHTML +=
+
+            '<div>' +
+
+            '<small>Current gallery image</small>' +
+
+            '<img src="' +
+            escapeHtml(url) +
+            '" alt="Current gallery image">' +
+
+            '</div>';
+
+        }
+      );
+
+    }else{
+
+      galleryPreview.innerHTML =
+        "<p>No current gallery images.</p>";
+
+    }
+
+
+  }
+
+  /* ================================
+     ADD NEW PRODUCT
+  ================================= */
+
+  else{
+
+    title.textContent = "Add Product";
+
+    editingId.value = "";
+
+
+    document.getElementById(
+      "productName"
+    ).value = "";
+
+
+    document.getElementById(
+      "productPrice"
+    ).value = "";
+
+
+    document.getElementById(
+      "productCategory"
+    ).value = "";
+
+
+    document.getElementById(
+      "productDescription"
+    ).value = "";
+
+
+    document.getElementById(
+      "productOrderLink"
+    ).value = "";
+
+
+    document.getElementById(
+      "productImageFile"
+    ).value = "";
+
+
+    document.getElementById(
+      "productGalleryFiles"
+    ).value = "";
+
+
+    document.getElementById(
+      "trending"
+    ).checked = false;
+
+
+    document.getElementById(
+      "topSelling"
+    ).checked = false;
+
+
+    document.getElementById(
+      "mainPreview"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+      "galleryPreview"
+    ).innerHTML = "";
+
+  }
+
+
+  /*
+    Move the form into view.
+  */
+
+  document.getElementById(
+    "productForm"
+  ).scrollIntoView({
+
+    behavior: "smooth",
+
+    block: "start"
+
+  });
+
+}
+
+
+/* ================================
+   HIDE PRODUCT FORM
+================================ */
+
+function hideProductForm(){
+
+  document.getElementById(
+    "productForm"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "editingProductId"
+  ).value = "";
+
+
+  document.getElementById(
+    "productMessage"
+  ).textContent = "";
+
+}
+
+
+/* ================================
+   SCROLL TO PRODUCTS
+================================ */
+
+function scrollProducts(){
+
+  document.getElementById(
+    "productsSection"
+  ).scrollIntoView({
+
+    behavior: "smooth"
+
+  });
+
+}
+
+
+/* ================================
+   MAIN IMAGE PREVIEW
+================================ */
+
+document
+  .getElementById("productImageFile")
+  .addEventListener(
+    "change",
+    function(){
+
+      const file =
+        this.files[0];
+
+
+      const preview =
+        document.getElementById(
+          "mainPreview"
+        );
+
+
+      preview.innerHTML = "";
+
+
+      if(!file){
+
+        return;
+
+      }
+
+
+      const url =
+        URL.createObjectURL(file);
+
+
+      preview.innerHTML =
+
+        '<img ' +
+
+        'src="' +
+        url +
+        '" ' +
+
+        'alt="Main image">';
+
+    }
+  );
+
+
+/* ================================
+   GALLERY IMAGE PREVIEW
+================================ */
+
+document
+  .getElementById("productGalleryFiles")
+  .addEventListener(
+    "change",
+    function(){
+
+      const preview =
+        document.getElementById(
+          "galleryPreview"
+        );
+
+
+      preview.innerHTML = "";
+
+
+      Array
+        .from(this.files)
+        .forEach(
+          function(file){
+
+            const url =
+              URL.createObjectURL(file);
+
+
+            preview.innerHTML +=
+
+              '<img ' +
+
+              'src="' +
+              url +
+              '" ' +
+
+              'alt="Gallery image">';
+
+          }
+        );
+
+    }
+  );
+
+
+/* ================================
+   BASIC HTML SAFETY
+================================ */
+
+function escapeHtml(value){
+
+  return String(value)
+
+    .replace(/&/g,"&amp;")
+
+    .replace(/</g,"&lt;")
+
+    .replace(/>/g,"&gt;")
+
+    .replace(/"/g,"&quot;")
+
+    .replace(/'/g,"&#039;");
+
+}
+
+</script>
+<script>
+
+/* ================================
+   UPLOAD IMAGE TO FIREBASE STORAGE
+================================ */
+
+async function uploadImage(file, folder){
+
+  if(!file){
+
+    throw new Error(
+      "No image file selected."
+    );
+
+  }
+
+
+  if(
+    !file.type ||
+    !file.type.startsWith("image/")
+  ){
+
+    throw new Error(
+      file.name +
+      " is not an image file."
+    );
+
+  }
+
+
+  /*
+    Make the original filename safe.
+  */
+
+  const safeName =
+    file.name.replace(
+      /[^a-zA-Z0-9._-]/g,
+      "_"
+    );
+
+
+  /*
+    Create a unique filename.
+  */
+
+  const fileName =
+    Date.now() +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2) +
+    "_" +
+    safeName;
+
+
+  /*
+    Firebase Storage location.
+  */
+
+  const imageRef =
+    storage
+      .ref()
+      .child(
+        folder +
+        "/" +
+        fileName
+      );
+
+
+  /*
+    Image metadata.
+  */
+
+  const metadata = {
+
+    contentType:
+      file.type,
+
+    cacheControl:
+      "public,max-age=31536000"
+
+  };
+
+
+  /*
+    Start upload.
+  */
+
+  const uploadTask =
+    imageRef.put(
+      file,
+      metadata
+    );
+
+
+  /*
+    Wait until upload finishes.
+    Also show upload percentage.
+  */
+
+  await new Promise(
+    function(resolve,reject){
+
+      uploadTask.on(
+
+        firebase.storage.TaskEvent.STATE_CHANGED,
+
+        function(snapshot){
+
+          const percent =
+            snapshot.totalBytes
+              ? Math.round(
+                  (
+                    snapshot.bytesTransferred /
+                    snapshot.totalBytes
+                  ) * 100
+                )
+              : 0;
+
+
+          document.getElementById(
+            "productMessage"
+          ).textContent =
+
+            "📤 Uploading " +
+            file.name +
+            " — " +
+            percent +
+            "%";
+
+        },
+
+
+        function(error){
+
+          reject(error);
+
+        },
+
+
+        function(){
+
+          resolve();
+
+        }
+
+      );
+
+    }
+  );
+
+
+  /*
+    Get public download URL.
+  */
+
+  return await imageRef
+    .getDownloadURL();
+
+}
+
+
+/* ================================
+   SAVE PRODUCT
+================================ */
+
+async function saveProduct(){
+
+  const message =
+    document.getElementById(
+      "productMessage"
+    );
+
+
+  /* PRODUCT NAME */
+
+  const name =
+    document.getElementById(
+      "productName"
+    )
+    .value
+    .trim();
+
+
+  /* PRICE */
+
+  const priceText =
+    document.getElementById(
+      "productPrice"
+    )
+    .value;
+
+
+  const price =
+    Number(priceText);
+
+
+  /* CATEGORY */
+
+  const category =
+    document.getElementById(
+      "productCategory"
+    )
+    .value
+    .trim();
+
+
+  /* DESCRIPTION */
+
+  const description =
+    document.getElementById(
+      "productDescription"
+    )
+    .value
+    .trim();
+
+
+  /* ORDER LINK */
+
+  const orderLink =
+    document.getElementById(
+      "productOrderLink"
+    )
+    .value
+    .trim();
+
+
+  /* MAIN IMAGE */
+
+  const mainFile =
+    document.getElementById(
+      "productImageFile"
+    )
+    .files[0];
+
+
+  /* GALLERY */
+
+  const galleryFiles =
+    Array.from(
+      document.getElementById(
+        "productGalleryFiles"
+      ).files
+    );
+
+
+  /* TRENDING */
+
+  const trending =
+    document.getElementById(
+      "trending"
+    ).checked;
+
+
+  /* TOP SELLING */
+
+  const topSelling =
+    document.getElementById(
+      "topSelling"
+    ).checked;
+
+
+  /* EDITING PRODUCT ID */
+
+  const editingId =
+    document.getElementById(
+      "editingProductId"
+    )
+    .value
+    .trim();
+
+
+  /* ================================
+     VALIDATION
+  ================================= */
+
+  if(
+    !name ||
+    priceText === "" ||
+    price < 0 ||
+    !category ||
+    !description
+  ){
+
+    message.className =
+      "message error";
+
+
+    message.textContent =
+      "❌ Please fill all required fields.";
+
+
+    return;
+
+  }
+
+
+  /*
+    New products require a main image.
+    Editing products can keep their old image.
+  */
+
+  if(
+    !editingId &&
+    !mainFile
+  ){
+
+    message.className =
+      "message error";
+
+
+    message.textContent =
+      "❌ Please select a main product image.";
+
+
+    return;
+
+  }
+
+
+  try{
+
+    message.className =
+      "message";
+
+
+    message.textContent =
+      "📤 Preparing image upload...";
+
+
+    /* ================================
+       FIND OLD PRODUCT WHEN EDITING
+    ================================= */
+
+    let oldProduct = null;
+
+
+    if(editingId){
+
+      oldProduct =
+        allProducts.find(
+          function(product){
+
+            return product.id === editingId;
+
+          }
+        );
+
+    }
+
+
+    /* ================================
+       MAIN IMAGE
+    ================================= */
+
+    let mainImage =
+      oldProduct
+        ? (oldProduct.image || "")
+        : "";
+
+
+    /*
+      If a new main image was selected,
+      upload it and replace the old URL.
+    */
+
+    if(mainFile){
+
+      mainImage =
+        await uploadImage(
+          mainFile,
+          "products"
+        );
+
+    }
+
+
+    /* ================================
+       GALLERY
+    ================================= */
+
+    let gallery =
+      oldProduct
+        ? [
+            ...(oldProduct.gallery || [])
+          ]
+        : [];
+
+
+    /*
+      If new gallery files were selected,
+      replace the existing gallery.
+    */
+
+    if(
+      galleryFiles.length > 0
+    ){
+
+      gallery = [];
+
+
+      for(
+        const file of galleryFiles
+      ){
+
+        const url =
+          await uploadImage(
+            file,
+            "products/gallery"
+          );
+
+
+        gallery.push(url);
+
+      }
+
+    }
+
+
+    /* ================================
+       PREPARE FIRESTORE DATA
+    ================================= */
+
+    message.textContent =
+      "💾 Saving product...";
+
+
+    const productData = {
+
+      name:
+        name,
+
+      price:
+        price,
+
+      category:
+        category,
+
+      description:
+        description,
+
+      orderLink:
+        orderLink,
+
+      image:
+        mainImage,
+
+      gallery:
+        gallery,
+
+      trending:
+        trending,
+
+      topSelling:
+        topSelling,
+
+      updatedAt:
+        firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+    };
+
+
+    /* ================================
+       UPDATE EXISTING PRODUCT
+    ================================= */
+
+    if(editingId){
+
+      await db
+        .collection("products")
+        .doc(editingId)
+        .update(
+          productData
+        );
+
+
+      message.className =
+        "message success";
+
+
+      message.textContent =
+        "✅ Product updated successfully!";
+
+    }
+
+
+    /* ================================
+       ADD NEW PRODUCT
+    ================================= */
+
+    else{
+
+      productData.createdAt =
+        firebase.firestore
+          .FieldValue
+          .serverTimestamp();
+
+
+      await db
+        .collection("products")
+        .add(
+          productData
+        );
+
+
+      message.className =
+        "message success";
+
+
+      message.textContent =
+        "✅ Product added successfully!";
+
+    }
+
+
+    /* ================================
+       REFRESH PRODUCT LIST
+    ================================= */
+
+    await loadProducts();
+
+
+    /*
+      Close the form after a short delay.
+    */
+
+    setTimeout(
+      function(){
+
+        hideProductForm();
+
+      },
+      800
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Save product error:",
+      error
+    );
+
+
+    message.className =
+      "message error";
+
+
+    message.textContent =
+      "❌ Error: " +
+      error.message;
+
+  }
+
+}
+
+</script>
+<script>
+
+/* ================================
+   LOAD ALL PRODUCTS
+================================ */
+
+async function loadProducts(){
+
+  const productList =
+    document.getElementById(
+      "productList"
+    );
+
+
+  productList.innerHTML =
+    "<p>Loading products...</p>";
+
+
+  try{
+
+    /*
+      Get every document from
+      the "products" collection.
+    */
+
+    const snapshot =
+      await db
+        .collection("products")
+        .get();
+
+
+    allProducts = [];
+
+
+    /*
+      Convert Firestore documents
+      into normal JavaScript objects.
+    */
+
+    snapshot.forEach(
+      function(doc){
+
+        allProducts.push({
+
+          id:
+            doc.id,
+
+          ...doc.data()
+
+        });
+
+      }
+    );
+
+
+    /*
+      Sort newest products first.
+    */
+
+    allProducts.sort(
+      function(a,b){
+
+        const aTime =
+          a.createdAt &&
+          a.createdAt.toMillis
+            ? a.createdAt.toMillis()
+            : 0;
+
+
+        const bTime =
+          b.createdAt &&
+          b.createdAt.toMillis
+            ? b.createdAt.toMillis()
+            : 0;
+
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    /*
+      Display products.
+    */
+
+    renderProducts(
+      allProducts
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Load products error:",
+      error
+    );
+
+
+    productList.innerHTML =
+      "<p>❌ Unable to load products: " +
+      escapeHtml(
+        error.message
+      ) +
+      "</p>";
+
+  }
+
+}
+
+
+/* ================================
+   DISPLAY PRODUCTS
+================================ */
+
+function renderProducts(
+  products
+){
+
+  const productList =
+    document.getElementById(
+      "productList"
+    );
+
+
+  productList.innerHTML = "";
+
+
+  /*
+    No products found.
+  */
+
+  if(!products.length){
+
+    productList.innerHTML =
+      "<p>No products found.</p>";
+
+    return;
+
+  }
+
+
+  /*
+    Create product card
+    for every product.
+  */
+
+  products.forEach(
+    function(product){
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.style.background =
+        "#f8f8f8";
+
+
+      item.style.padding =
+        "15px";
+
+
+      item.style.marginTop =
+        "12px";
+
+
+      item.style.borderRadius =
+        "10px";
+
+
+      const image =
+        product.image || "";
+
+
+      /*
+        Product HTML.
+      */
+
+      item.innerHTML = `
+
+        <div style="
+          display:flex;
+          gap:15px;
+          align-items:center;
+          flex-wrap:wrap;
+        ">
+
+
+          ${
+            image
+
+            ?
+
+            `
+            <img
+              src="${escapeHtml(image)}"
+              style="
+                width:80px;
+                height:80px;
+                object-fit:cover;
+                border-radius:10px;
+              "
+              alt="Product image">
+            `
+
+            :
+
+            `
+            <div style="
+              width:80px;
+              height:80px;
+              background:#ddd;
+              border-radius:10px;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:12px;
+              color:#666;
+            ">
+              No Image
+            </div>
+            `
+
+          }
+
+
+          <div style="
+            flex:1;
+            min-width:180px;
+          ">
+
+
+            <strong>
+
+              ${escapeHtml(
+                product.name ||
+                "Unnamed product"
+              )}
+
+            </strong>
+
+
+            <br>
+
+
+            ₹${Number(
+              product.price || 0
+            ).toLocaleString(
+              "en-IN"
+            )}
+
+
+            <br>
+
+
+            <small>
+
+              ${escapeHtml(
+                product.category ||
+                ""
+              )}
+
+            </small>
+
+
+            <br>
+
+
+            ${
+              product.trending
+
+              ?
+
+              `
+              <small>
+                🔥 Trending
+              </small>
+              `
+
+              :
+
+              ""
+            }
+
+
+            ${
+              product.topSelling
+
+              ?
+
+              `
+              <small
+                style="
+                  margin-left:8px;
+                "
+              >
+                ⭐ Top Selling
+              </small>
+              `
+
+              :
+
+              ""
+            }
+
+
+          </div>
+
+
+          <div style="
+            display:flex;
+            gap:6px;
+            flex-wrap:wrap;
+          ">
+
+
+            <button
+              onclick="openProductDetails('${product.id}')">
+
+              View
+
+            </button>
+
+
+            <button
+              onclick="editProduct('${product.id}')">
+
+              Edit
+
+            </button>
+
+
+            <button
+              onclick="deleteProduct('${product.id}')"
+              style="
+                background:#d9363e;
+                color:white;
+              ">
+
+              Delete
+
+            </button>
+
+
+          </div>
+
+
+        </div>
+
+      `;
+
+
+      productList.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* ================================
+   FILTER PRODUCTS
+================================ */
+
+function filterProducts(
+  type
+){
+
+  let filtered =
+    allProducts;
+
+
+  /*
+    Trending products.
+  */
+
+  if(
+    type === "trending"
+  ){
+
+    filtered =
+      allProducts.filter(
+        function(product){
+
+          return (
+            product.trending === true
+          );
+
+        }
+      );
+
+  }
+
+
+  /*
+    Top-selling products.
+  */
+
+  if(
+    type === "topSelling"
+  ){
+
+    filtered =
+      allProducts.filter(
+        function(product){
+
+          return (
+            product.topSelling === true
+          );
+
+        }
+      );
+
+  }
+
+
+  /*
+    Display filtered products.
+  */
+
+  renderProducts(
+    filtered
+  );
+
+
+  scrollProducts();
+
+}
+
+
+/* ================================
+   EDIT PRODUCT
+================================ */
+
+function editProduct(
+  id
+){
+
+  const product =
+    allProducts.find(
+      function(item){
+
+        return item.id === id;
+
+      }
+    );
+
+
+  if(!product){
+
+    alert(
+      "Product not found."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Open the form
+    with existing product data.
+  */
+
+  showProductForm(
+    product
+  );
+
+}
+
+
+/* ================================
+   DELETE PRODUCT
+================================ */
+
+async function deleteProduct(
+  id
+){
+
+  const product =
+    allProducts.find(
+      function(item){
+
+        return item.id === id;
+
+      }
+    );
+
+
+  if(!product){
+
+    return;
+
+  }
+
+
+  const confirmDelete =
+    confirm(
+      'Delete "' +
+      (
+        product.name ||
+        "this product"
+      ) +
+      '"?'
+    );
+
+
+  if(!confirmDelete){
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+      Delete Firestore document.
+    */
+
+    await db
+      .collection("products")
+      .doc(id)
+      .delete();
+
+
+    /*
+      Close details if the
+      deleted product was open.
+    */
+
+    if(
+      currentProduct &&
+      currentProduct.id === id
+    ){
+
+      closeDetails();
+
+    }
+
+
+    /*
+      Reload product list.
+    */
+
+    await loadProducts();
+
+
+    alert(
+      "✅ Product deleted successfully!"
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Delete error:",
+      error
+    );
+
+
+    alert(
+      "❌ Delete failed: " +
+      error.message
+    );
+
+  }
+
+}
+
+</script>
+  <script>
+
+/* ================================
+   PRODUCT DETAILS
+================================ */
+
+async function openProductDetails(
+  id
+){
+
+  const product =
+    allProducts.find(
+      function(item){
+
+        return item.id === id;
+
+      }
+    );
+
+
+  if(!product){
+
+    alert(
+      "Product not found."
+    );
+
+    return;
+
+  }
+
+
+  currentProduct =
+    product;
+
+
+  const details =
+    document.getElementById(
+      "productDetails"
+    );
+
+
+  details.style.display =
+    "block";
+
+
+  /* ================================
+     PRODUCT NAME
+  ================================= */
+
+  document.getElementById(
+    "detailName"
+  ).textContent =
+    product.name ||
+    "Unnamed Product";
+
+
+  /* ================================
+     PRODUCT PRICE
+  ================================= */
+
+  document.getElementById(
+    "detailPrice"
+  ).textContent =
+    "Price: ₹" +
+    Number(
+      product.price || 0
+    ).toLocaleString(
+      "en-IN"
+    );
+
+
+  /* ================================
+     PRODUCT CATEGORY
+  ================================= */
+
+  document.getElementById(
+    "detailCategory"
+  ).textContent =
+    "Category: " +
+    (
+      product.category ||
+      ""
+    );
+
+
+  /* ================================
+     PRODUCT DESCRIPTION
+  ================================= */
+
+  document.getElementById(
+    "detailDescription"
+  ).textContent =
+    product.description ||
+    "No description available.";
+
+
+  /* ================================
+     MAIN IMAGE
+  ================================= */
+
+  const mainImage =
+    document.getElementById(
+      "detailImage"
+    );
+
+
+  if(product.image){
+
+    mainImage.src =
+      product.image;
+
+
+    mainImage.style.display =
+      "block";
+
+  }else{
+
+    mainImage.style.display =
+      "none";
+
+  }
+
+
+  /* ================================
+     GALLERY
+  ================================= */
+
+  const gallery =
+    document.getElementById(
+      "detailGallery"
+    );
+
+
+  gallery.innerHTML =
+    "";
+
+
+  if(
+    product.gallery &&
+    product.gallery.length
+  ){
+
+    product.gallery.forEach(
+      function(url){
+
+        gallery.innerHTML += `
+
+          <img
+            src="${escapeHtml(url)}"
+            alt="Gallery image">
+
+        `;
+
+      }
+    );
+
+  }else{
+
+    gallery.innerHTML =
+      "<p>No gallery images.</p>";
+
+  }
+
+
+  /* ================================
+     REVIEWS
+  ================================= */
+
+  await loadReviews(
+    product.id
+  );
+
+
+  /* ================================
+     SCROLL TO DETAILS
+  ================================= */
+
+  details.scrollIntoView({
+
+    behavior:"smooth"
+
+  });
+
+}
+
+
+/* ================================
+   CLOSE PRODUCT DETAILS
+================================ */
+
+function closeDetails(){
+
+  document.getElementById(
+    "productDetails"
+  ).style.display =
+    "none";
+
+
+  currentProduct =
+    null;
+
+}
+
+
+/* ================================
+   LOAD REVIEWS
+================================ */
+
+async function loadReviews(
+  productId
+){
+
+  const reviewList =
+    document.getElementById(
+      "reviewList"
+    );
+
+
+  reviewList.innerHTML =
+    "<p>Loading reviews...</p>";
+
+
+  try{
+
+    const snapshot =
+      await db
+        .collection("reviews")
+        .where(
+          "productId",
+          "==",
+          productId
+        )
+        .get();
+
+
+    /* ================================
+       NO REVIEWS
+    ================================= */
+
+    if(snapshot.empty){
+
+      reviewList.innerHTML =
+        "<p>No reviews yet.</p>";
+
+      return;
+
+    }
+
+
+    reviewList.innerHTML =
+      "";
+
+
+    /* ================================
+       DISPLAY REVIEWS
+    ================================= */
+
+    snapshot.forEach(
+      function(doc){
+
+        const review =
+          doc.data();
+
+
+        const name =
+          review.name ||
+          review.userName ||
+          "Customer";
+
+
+        const text =
+          review.review ||
+          review.comment ||
+          review.text ||
+          "No review text.";
+
+
+        const rating =
+          review.rating ||
+          "";
+
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+
+        div.style.background =
+          "#f7f7f7";
+
+
+        div.style.padding =
+          "12px";
+
+
+        div.style.borderRadius =
+          "10px";
+
+
+        div.style.marginTop =
+          "10px";
+
+
+        div.innerHTML = `
+
+          <strong>
+            ${escapeHtml(name)}
+          </strong>
+
+
+          ${
+            rating
+
+            ?
+
+            `
+            <div>
+              ⭐ ${escapeHtml(
+                String(rating)
+              )}/5
+            </div>
+            `
+
+            :
+
+            ""
+          }
+
+
+          <p>
+            ${escapeHtml(text)}
+          </p>
+
+        `;
+
+
+        reviewList.appendChild(
+          div
+        );
+
+      }
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Reviews error:",
+      error
+    );
+
+
+    reviewList.innerHTML =
+      "<p>Reviews could not be loaded.</p>";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
